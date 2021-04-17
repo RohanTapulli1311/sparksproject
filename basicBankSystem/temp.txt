@@ -1,0 +1,64 @@
+<?php
+if(isset($_POST['submit'])){
+
+	$reciever=$_POST['transfer_to'];
+	$amount=$_POST['amount'];
+	$getAmount="select current_balance from bank.customers where ID = '$ID'";
+	$query3=mysqli_query($con,$getAmount);
+	$balance=mysqli_fetch_row($query3);
+	if($balance[0]-$amount>=500){
+		$updateBalance1=$balance[0]-$amount;
+		$getAmount2="select current_balance from bank.customers where name = '$reciever'";
+		$query4=mysqli_query($con,$getAmount2);
+		$balance2=mysqli_fetch_row($query4);
+		$updateBalance2=$balance2[0]+$amount;
+		$updateQuery="update bank.customers set current_balance=CASE WHEN ID='$ID' THEN 'updateBalance1'
+		WHEN name='$reciever' THEN 'updateBalance2'
+		END";
+		$executeUpdate=mysqli_query($con,$updateQuery);
+		if ($executeUpdate) {
+			?>
+			<script type="text/javascript">alert("updated successfully in customers");</script>
+
+			<?php
+			$insertQuery="insert into bank.transaction('transfer_from','transfer_to','amount') value('sender[0]','reciever','amount')";
+			$insert=mysqli_query($con,$insertQuery);
+			if($insertQuery){
+				?>
+				<script type="text/javascript">alert("cannot insert in transaction");</script>
+				<?php
+			}
+			else{
+				?>
+				<script type="text/javascript">alert("inserted successfully in transaction");</script>
+				<?php
+			}
+
+		}
+		else{
+			?>
+			<script type="text/javascript">alert("cannot update in customers");</script>
+			<?php
+		}
+	}
+
+	else{
+		?>
+		<script type="text/javascript">alert("no sufficient balance for transaction");</script>
+
+		<?php
+
+
+	}
+
+
+}
+
+
+
+
+
+
+
+
+?>
